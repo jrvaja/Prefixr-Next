@@ -11,6 +11,7 @@ define(['modules/css3', 'jquery', 'modules/prefixr'], function(css3, $, prefixr)
 
 		it("should store a list of all the CSS3 properties", function() {
 			css3.list.should.include('box-sizing').and.include('transition');
+			console.log('css3');
 		});
 
 		it("should store the necessary prefixes for every single property", function() {

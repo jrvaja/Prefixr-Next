@@ -2,7 +2,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['../js/modules/prefixr'], function(Prefixr) {
+define(['modules/prefixr'], function(Prefixr) {
 	describe("Prefixr", function() {
 		var prefixr,
 			simpleCSS = "div { margin: 0; }";
@@ -39,3 +39,4 @@ define(['../js/modules/prefixr'], function(Prefixr) {
 	});
 
 });
+
