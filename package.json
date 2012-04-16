@@ -1,0 +1,10 @@
+{
+  "name": "Prefixr Next",
+  "version": "0.1.0",
+  "dependencies": {
+    "amdefine": "0.0.2",
+    "requirejs": "~1.0.7",
+    "should": "~0.6.1",
+    "jquery": "~1.6.3"
+  }
+}
