@@ -1,0 +1,3 @@
+#! /usr/bin/env sh
+
+open http://localhost:8000/node_modules/chai/test/browser && python -m SimpleHTTPServer

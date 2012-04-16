@@ -2,7 +2,8 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['jquery'], function($) {
+	
+define(['jquery', 'modules/prefixr'], function($, Prefixr) {
 	var fullPropList = [],
 
 		css3 = [],
@@ -102,6 +103,8 @@ define(['jquery'], function($) {
 	// 	propList.prefixes = setPrefixes(propList.prefixes, desiredPrefixes); // need this from instance
 	// 	setProps(propList);
 	// });
+
+	Prefixr.css3Properties = fullPropList;
 
 	return {
 		properties: fullPropList,

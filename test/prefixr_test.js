@@ -1,8 +1,8 @@
-var requirejs = require('requirejs');
-requirejs.config({ nodeRequire: require });
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 
-requirejs(['../js/modules/prefixr'], function(Prefixr) {
-
+define(['../js/modules/prefixr'], function(Prefixr) {
 	describe("Prefixr", function() {
 		var prefixr,
 			simpleCSS = "div { margin: 0; }";
@@ -30,7 +30,7 @@ requirejs(['../js/modules/prefixr'], function(Prefixr) {
 				prefixr.setPrefixes(['webkit', 'moz']);
 			});
 
-			it("should allow the user to specify which prefixes to support", function() {
+			it("should allow the user to specify which prefixes they want to support", function() {
 				prefixr.setPrefixes(['moz', 'webkit']);
 				prefixr.allPrefixes.should.have.lengthOf(2);
 			});
