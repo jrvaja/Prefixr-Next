@@ -1,5 +1,5 @@
 if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
+		var define = require('amdefine')(module);
 }
 
 define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
@@ -25,7 +25,7 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 			this.applyCSS3();
 			this.parsedCSS = this.arrayToObject(this.parsedCSS);
 
-			return this.parsedCSS;
+			return this.backToString(this.parsedCSS);
 		},
 
 		applyCSS3: function() {
@@ -102,6 +102,86 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 			}
 
 			return arr;
+		},
+
+		backToString: function() {
+			var str = '',
+				self = this,
+				bucket = {};
+
+			// For each declaration block...
+			$.each( [].concat(this.parsedCSS), function(i, obj) {
+				bucket = self._buildCSS3PropertiesList.call(self, obj, {});
+
+				// Begin building fragment
+				str += obj.selector + ' {';
+
+				// For each property : value...
+				$.each( obj.declarations, function(propName, value) {
+					if ( bucket.hasOwnProperty( self._stripPrefix(propName) ) ) {
+						return true; // we're going to take care of CSS3 props last.
+					}
+					str += self._createDeclaration( propName, value);
+				});
+
+				// Now add the CSS3 props to the {} block.
+				$.each(bucket, function(official, propInfo) {
+					$.each( propInfo.declarations, function(i, prefix) {
+						str += self._createDeclaration(prefix, propInfo.value);
+					});
+
+					// Lastly, add the official version.
+					str += self._createDeclaration(official, propInfo.value);
+				});
+
+				str += '}';
+			});
+
+			return str;
+		},
+
+		_buildCSS3PropertiesList: function(obj, bucket) {
+			var self = this;
+		// For each property : value...
+			$.each( obj.declarations, function(propName, value) {
+				// If is an official CSS3 prop, store it in the bucket
+				// So that our vendor prefixes don't come last
+				if ( self._isOfficial(propName) ) {
+					bucket[propName] = {
+						declarations: [],
+						value: value
+					};
+				} else if ( self ._isVendor(propName) ) {
+					var official = self ._stripPrefix(propName);
+					if ( bucket.hasOwnProperty(official) ) {
+						if ( $.inArray(propName, bucket[official].declarations) === -1 ) {
+							bucket[official].declarations.push(propName);
+						}
+					}
+				} else {
+					// just a regular property
+				}
+			});
+
+			return bucket;
+		},
+
+		_createDeclaration: function(propName, value) {
+			return propName + ': ' + value + '; ';
+		},
+
+		_isOfficial: function(propName) {
+			return $.inArray(propName, this.css3Properties.list) > - 1;
+		},
+
+		_isVendor: function(propName) {
+			var prefixes = this.allPrefixes.join('|');
+
+			return !!propName.match(prefixes);
+		},
+
+		_stripPrefix: function(propName) {
+			return propName.replace(/-webkit-|-o-|-moz-|-ms-/, '');
 		}
 
 	};
