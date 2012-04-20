@@ -142,24 +142,30 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 
 		_buildCSS3PropertiesList: function(obj, bucket) {
 			var self = this;
+
+			// Add a new CSS3 property to the bucket list.
+			var addToBucket = function(propName, value, vendorProps) {
+				return bucket[propName] = {
+					declarations: vendorProps ? [].concat(vendorProps) : [],
+					value: value
+				};
+			};
+
 		// For each property : value...
 			$.each( obj.declarations, function(propName, value) {
 				// If is an official CSS3 prop, store it in the bucket
 				// So that our vendor prefixes don't come last
 				if ( self._isOfficial(propName) ) {
-					bucket[propName] = {
-						declarations: [],
-						value: value
-					};
-				} else if ( self ._isVendor(propName) ) {
-					var official = self ._stripPrefix(propName);
+					addToBucket(propName, value);
+				} else if ( self._isVendor(propName) ) {
+					var official = self._stripPrefix(propName);
 					if ( bucket.hasOwnProperty(official) ) {
 						if ( $.inArray(propName, bucket[official].declarations) === -1 ) {
 							bucket[official].declarations.push(propName);
 						}
+					} else {
+						addToBucket(official, value, propName);
 					}
-				} else {
-					// just a regular property
 				}
 			});
 
