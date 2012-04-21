@@ -20,11 +20,14 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 			});
 		},
 
-		optimize: function() {
+		optimize: function(desiredFormatting) {
+			this.formatting = desiredFormatting;
+
 			this.parsedCSS = parser.parse(this.css);
 			this.applyCSS3();
 			this.parsedCSS = this.arrayToObject(this.parsedCSS);
 
+			// TODO - second param specifies how the CSS should be formatted/styled.
 			return this.backToString(this.parsedCSS);
 		},
 
@@ -137,7 +140,7 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 				str += '}';
 			});
 
-			return str;
+			return self.style(str);
 		},
 
 		_buildCSS3PropertiesList: function(obj, bucket) {
@@ -173,7 +176,7 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 		},
 
 		_createDeclaration: function(propName, value) {
-			return propName + ': ' + value + '; ';
+			return propName + ': ' + value + ';';
 		},
 
 		_isOfficial: function(propName) {
@@ -188,6 +191,31 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 
 		_stripPrefix: function(propName) {
 			return propName.replace(/-webkit-|-o-|-moz-|-ms-/, '');
+		},
+
+		style: function(css) {
+			var formatting = {
+				'default': function() {
+					return css
+						.replace(/\{/g, "{\n   ")
+						.replace(/;/g, ";\n   ")
+						.replace(/\s{3}\}/g, "}\n\n");
+				},
+				'compressed': function() {
+					return css;
+				},
+
+				'single': function() {
+					return css
+						.replace(/\}/g, '}\n\n')
+						.replace(/(;|\{)/g, '$1 ');
+				}
+			};
+
+			return formatting[formatting.hasOwnProperty(this.formatting) ?
+				this.formatting
+				: 'default'
+			]();
 		}
 
 	};

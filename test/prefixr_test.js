@@ -85,13 +85,27 @@ define(['modules/prefixr'], function(Prefixr) {
 		  it("should return the properties in the correct order (vendors before official).", function() {
 		    var css = 'div { box-shadow: none; -o-transition: all 1s; padding: 0; } #content { box-shadow: 0 0 0 3px red; margin: 10px; } #main { box-shadow: 0 1px 0 black; float: left; display: none; -ms-box-sizing: border-box; }';
 		    var result = prefixr.init(css).optimize();
-console.log(result);
-		    result.should.match(/\-box-shadow: none; box-shadow: none;/);
-		    result.should.match(/\-ms-transition: all 1s; transition: all 1s;/);
-		    result.should.match(/\-box-sizing: border-box; box-sizing: border-box;/);
+
+		    result.should.match(/\-box-shadow: none;\s*box-shadow: none;/);
+		    result.should.match(/\-ms-transition: all 1s;\s* transition: all 1s;/);
+		    result.should.match(/\-box-sizing: border-box;\s* box-sizing: border-box;/);
+		  });
+
+		  it("should accept a parameter (defaults to 'default'), that species how the returned CSS should be formatted.", function() {
+		    var css = 'div { box-shadow: none; -o-transition: all 1s; padding: 0; } #content { box-shadow: 0 0 0 3px red; margin: 10px; } #main { box-shadow: 0 1px 0 black; float: left; display: none; -ms-box-sizing: border-box; }';
+		    var result = prefixr.init(css).optimize();
+
+		    result.should.match(/{\n   /);
+
+		    result = prefixr.init(css).optimize('single');
+		    result.should.match(/}\n\n/);
 		  });
 
 		});
+
+	it("should properly handle situations when the prefix is not part of the property name, but instead the value - like gradients.", function() {
+	  
+	});
 
 	});
 
