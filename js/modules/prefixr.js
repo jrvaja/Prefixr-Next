@@ -21,13 +21,12 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 		},
 
 		optimize: function(desiredFormatting) {
-			this.formatting = desiredFormatting;
+			this.formatting = desiredFormatting || 'default';
 
 			this.parsedCSS = parser.parse(this.css);
 			this.applyCSS3();
 			this.parsedCSS = this.arrayToObject(this.parsedCSS);
 
-			// TODO - second param specifies how the CSS should be formatted/styled.
 			return this.backToString(this.parsedCSS);
 		},
 
@@ -212,10 +211,7 @@ define(['modules/parser', 'modules/css3'], function(parser, css3Props) {
 				}
 			};
 
-			return formatting[formatting.hasOwnProperty(this.formatting) ?
-				this.formatting
-				: 'default'
-			]();
+			return formatting[this.formatting]();
 		}
 
 	};
